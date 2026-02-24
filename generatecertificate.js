@@ -1,11 +1,23 @@
 const { createCanvas, loadImage } = require('canvas');
 const fs = require('fs');
+const path = require('path');
 
 async function createCertificate(name, certificateId) {
   try {
+
+    // Absolute paths (production safe)
+    const templatePath = path.join(__dirname, 'templates', 'template.png');
+    const qrPath = path.join(__dirname, 'qrcodes', `${certificateId}.png`);
+    const certDir = path.join(__dirname, 'certificates');
+
+    // Create certificates folder if not exists
+    if (!fs.existsSync(certDir)) {
+      fs.mkdirSync(certDir, { recursive: true });
+    }
+
     // Load template & QR
-    const template = await loadImage('./templates/template.png');
-    const qr = await loadImage(`./qrcodes/${certificateId}.png`);
+    const template = await loadImage(templatePath);
+    const qr = await loadImage(qrPath);
 
     // Create canvas
     const canvas = createCanvas(template.width, template.height);
@@ -19,26 +31,23 @@ async function createCertificate(name, certificateId) {
     // =============================
     ctx.font = "bold 60px Arial";
     ctx.fillStyle = "black";
-    ctx.textAlign = "center";          // center horizontally
-    ctx.textBaseline = "alphabetic";   // proper text baseline
+    ctx.textAlign = "center";
+    ctx.textBaseline = "alphabetic";
 
-    // Center X position
     const centerX = template.width / 2;
-
-    // Adjust this Y value to match underline perfectly
-    const nameY = 720;   // 🔧 Adjust slightly (710-740) if needed
+    const nameY = 720; // adjust if needed
 
     ctx.fillText(name, centerX, nameY);
 
     // =============================
-    // ADD CERTIFICATE ID (Bottom Left)
+    // ADD CERTIFICATE ID
     // =============================
     ctx.font = "28px Arial";
     ctx.textAlign = "left";
     ctx.fillText(`ID: ${certificateId}`, 120, template.height - 80);
 
     // =============================
-    // ADD QR CODE (Bottom Right)
+    // ADD QR CODE
     // =============================
     const qrSize = 200;
     const margin = 60;
@@ -48,14 +57,17 @@ async function createCertificate(name, certificateId) {
 
     ctx.drawImage(qr, qrX, qrY, qrSize, qrSize);
 
-    // Save file
+    // Save certificate
+    const outputPath = path.join(certDir, `${certificateId}.png`);
     const buffer = canvas.toBuffer("image/png");
-    fs.writeFileSync(`./certificates/${certificateId}.png`, buffer);
+
+    fs.writeFileSync(outputPath, buffer);
 
     console.log(`✅ Certificate created for ${name}`);
 
   } catch (error) {
     console.error("Certificate Generation Error:", error);
+    throw error; // important for bulk upload
   }
 }
 
