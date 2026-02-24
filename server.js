@@ -181,6 +181,20 @@ app.get('/certificate/:id', (req, res) => {
   res.sendFile(__dirname + '/public/verify.html');
 });
 // =============================
+// DOWNLOAD CERTIFICATE API
+// =============================
+app.get('/download/:id', (req, res) => {
+  const certificateId = req.params.id;
+
+  const filePath = path.join(__dirname, 'certificates', `${certificateId}.png`);
+
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ message: "Certificate not found" });
+  }
+
+  res.download(filePath, `${certificateId}.png`);
+});
+// =============================
 // START SERVER
 // =============================
 app.listen(PORT,'0.0.0.0',() => {
