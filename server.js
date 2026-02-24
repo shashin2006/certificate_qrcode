@@ -1,0 +1,177 @@
+// =============================
+// IMPORTS
+// =============================
+const express = require('express');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const cors = require('cors');
+const QRCode = require('qrcode');
+const multer = require('multer');
+const csv = require('csv-parser');
+const fs = require('fs');
+
+// Local files
+const Certificate = require('./models/Certificate');
+const { generateCertificateId, generateToken } = require('./utils/generateId');
+const createCertificate = require('./generateCertificate');
+
+// =============================
+// CONFIGURATION
+// =============================
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Middleware
+app.use(express.json());
+app.use(cors());
+app.use(express.static('public'));
+// File upload setup
+const upload = multer({ dest: 'uploads/' });
+
+// =============================
+// DATABASE CONNECTION
+// =============================
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch(err => {
+    console.error("❌ MongoDB Error:", err);
+    process.exit(1);
+  });
+
+// =============================
+// QR GENERATION FUNCTION
+// =============================
+async function generateQR(certificateId, token) {
+  try {
+    // IMPORTANT: use http for localhost
+    const url = `http://localhost:5000/verify.html?id=${certificateId}&token=${token}`;
+    await QRCode.toFile(`./qrcodes/${certificateId}.png`, url);
+
+    console.log(`QR generated for ${certificateId}`);
+  } catch (error) {
+    console.error("QR Generation Error:", error);
+    throw error;
+  }
+}
+
+// =============================
+// ISSUE CERTIFICATE API
+// =============================
+app.post('/issue', async (req, res) => {
+  try {
+    const { name } = req.body;
+
+    if (!name) {
+      return res.status(400).json({ message: "Name is required" });
+    }
+
+    const count = await Certificate.countDocuments();
+    const certificateId = generateCertificateId(count + 1);
+    const token = generateToken();
+
+    // Generate QR
+    await generateQR(certificateId, token);
+
+    // Generate Certificate Image
+    await createCertificate(name, certificateId);
+
+    // Save to DB
+    const cert = new Certificate({
+      certificateId,
+      name,
+      department: "CSE",
+      event: "BYTEFEST 2K26",
+      issuedDate: new Date(),
+      token
+    });
+
+    await cert.save();
+
+    res.status(201).json({
+      message: "✅ Certificate Issued Successfully",
+      certificateId
+    });
+
+  } catch (error) {
+    console.error("Issue Certificate Error:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+// =============================
+// BULK CSV UPLOAD API
+// =============================
+app.post('/upload', upload.single('file'), async (req, res) => {
+  try {
+    const results = [];
+    const filePath = req.file.path;
+
+    fs.createReadStream(filePath)
+      .pipe(csv())
+      .on('data', (data) => results.push(data))
+      .on('end', async () => {
+
+        for (let i = 0; i < results.length; i++) {
+
+          const count = await Certificate.countDocuments();
+          const certificateId = generateCertificateId(count + 1);
+          const token = generateToken();
+
+          await generateQR(certificateId, token);
+          await createCertificate(results[i].name, certificateId);
+
+          const cert = new Certificate({
+            certificateId,
+            name: results[i].name,
+            department: "CSE",
+            event: "BYTEFEST 2K26",
+            issuedDate: new Date(),
+            token
+          });
+
+          await cert.save();
+        }
+
+        fs.unlinkSync(filePath); // delete uploaded file
+
+        res.json({ message: "✅ All Certificates Generated Successfully" });
+      });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error generating certificates" });
+  }
+});
+// =============================
+// VERIFY CERTIFICATE API
+// =============================
+app.get('/verify/:id', async (req, res) => {
+  const cert = await Certificate.findOne({
+    certificateId: req.params.id,
+    token: req.query.token
+  });
+
+  if (!cert) {
+    return res.status(404).json({ valid: false });
+  }
+
+  res.json({
+    valid: true,
+    name: cert.name,
+    certificateId: cert.certificateId,
+    event: cert.event,
+    department: cert.department,
+    issuedDate: cert.issuedDate
+  });
+});
+
+app.get('/certificate/:id', (req, res) => {
+  res.sendFile(__dirname + '/public/verify.html');
+});
+// =============================
+// START SERVER
+// =============================
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});

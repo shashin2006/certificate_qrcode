@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Certificate Verification</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-br from-blue-50 to-gray-100 min-h-screen flex items-center justify-center">
+
+  <div class="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-lg text-center">
+
+    <h1 class="text-3xl font-bold mb-6 text-gray-800">
+      Certificate Verification
+    </h1>
+
+    <div id="status" class="text-lg font-semibold mb-4">
+      Checking certificate...
+    </div>
+
+    <div id="details" class="mt-6 space-y-3 text-left hidden">
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <p class="text-sm text-gray-500">Name</p>
+        <p id="name" class="text-lg font-medium text-gray-800"></p>
+      </div>
+
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <p class="text-sm text-gray-500">Certificate ID</p>
+        <p id="certId" class="text-lg font-medium text-gray-800"></p>
+      </div>
+
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <p class="text-sm text-gray-500">Event</p>
+        <p id="event" class="text-lg font-medium text-gray-800"></p>
+      </div>
+
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <p class="text-sm text-gray-500">Department</p>
+        <p id="department" class="text-lg font-medium text-gray-800"></p>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const certificateId = params.get('id');
+  const token = params.get('token');
+
+  fetch(`http://localhost:5000/verify/${certificateId}?token=${token}`)
+    .then(res => res.json())
+    .then(data => {
+      const statusDiv = document.getElementById("status");
+      const detailsDiv = document.getElementById("details");
+
+      if (!data.valid) {
+        statusDiv.innerHTML = "❌ Certificate Not Valid";
+        statusDiv.className = "text-red-600 font-bold text-xl";
+        detailsDiv.classList.add("hidden");
+      } else {
+        statusDiv.innerHTML = "✅ Certificate Verified";
+        statusDiv.className = "text-green-600 font-bold text-xl";
+
+        document.getElementById("name").innerText = data.name;
+        document.getElementById("certId").innerText = data.certificateId;
+        document.getElementById("event").innerText = data.event;
+        document.getElementById("department").innerText = data.department;
+
+        detailsDiv.classList.remove("hidden");
+      }
+    })
+    .catch(() => {
+      document.getElementById("status").innerHTML = "⚠️ Server Error";
+      document.getElementById("status").className = "text-yellow-600 font-bold text-xl";
+    });
+</script>
+
+</body>
+</html>
