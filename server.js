@@ -13,7 +13,7 @@ const fs = require('fs');
 // Local files
 const Certificate = require('./models/Certificate');
 const { generateCertificateId, generateToken } = require('./utils/generateId');
-const createCertificate = require('./generatecertificate');
+const createCertificate = require('./generateCertificate');
 
 // =============================
 // CONFIGURATION
@@ -26,7 +26,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(express.json());
 app.use(cors({
-  origin: "https://certificate-qrcode-gilt.vercel.app"
+  origin: process.env.FRONTEND_URL
 }));
 app.use(express.static('public'));
 // File upload setup
@@ -48,7 +48,7 @@ mongoose.connect(process.env.MONGO_URI)
 async function generateQR(certificateId, token) {
   try {
     // IMPORTANT: use http for localhost
-    const url = `https://certificate-qrcode-gilt.vercel.app/verify.html?id=${certificateId}&token=${token}`;
+    const url = `${process.env.FRONTEND_URL}/verify.html?id=${certificateId}&token=${token}`;
     await QRCode.toFile(`./qrcodes/${certificateId}.png`, url);
 
     console.log(`QR generated for ${certificateId}`);
@@ -174,6 +174,6 @@ app.get('/certificate/:id', (req, res) => {
 // =============================
 // START SERVER
 // =============================
-app.listen(PORT, () => {
+app.listen(PORT,'0.0.0.0',() => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
