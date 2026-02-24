@@ -158,23 +158,36 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 // VERIFY CERTIFICATE API
 // =============================
 app.get('/verify/:id', async (req, res) => {
-  const cert = await Certificate.findOne({
-    certificateId: req.params.id,
-    token: req.query.token
-  });
+  try {
+    const { id } = req.params;
+    const { token } = req.query;
 
-  if (!cert) {
-    return res.status(404).json({ valid: false });
+    if (!id || !token) {
+      return res.status(400).json({ valid: false, message: "Missing token or ID" });
+    }
+
+    const cert = await Certificate.findOne({
+      certificateId: id,
+      token: token
+    });
+
+    if (!cert) {
+      return res.status(404).json({ valid: false });
+    }
+
+    res.json({
+      valid: true,
+      name: cert.name,
+      certificateId: cert.certificateId,
+      event: cert.event,
+      department: cert.department,
+      issuedDate: cert.issuedDate
+    });
+
+  } catch (error) {
+    console.error("Verify Error:", error);
+    res.status(500).json({ valid: false });
   }
-
-  res.json({
-    valid: true,
-    name: cert.name,
-    certificateId: cert.certificateId,
-    event: cert.event,
-    department: cert.department,
-    issuedDate: cert.issuedDate
-  });
 });
 
 app.get('/certificate/:id', (req, res) => {
