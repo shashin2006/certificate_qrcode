@@ -13,7 +13,7 @@ const fs = require('fs');
 // Local files
 const Certificate = require('./models/Certificate');
 const { generateCertificateId, generateToken } = require('./utils/generateId');
-const createCertificate = require('./generateCertificate');
+const createCertificate = require('./generatecertificate');
 
 // =============================
 // CONFIGURATION
