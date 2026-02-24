@@ -9,7 +9,7 @@ const QRCode = require('qrcode');
 const multer = require('multer');
 const csv = require('csv-parser');
 const fs = require('fs');
-
+const path=require('path')
 // Local files
 const Certificate = require('./models/Certificate');
 const { generateCertificateId, generateToken } = require('./utils/generateId');
@@ -47,9 +47,18 @@ mongoose.connect(process.env.MONGO_URI)
 // =============================
 async function generateQR(certificateId, token) {
   try {
-    // IMPORTANT: use http for localhost
+    const qrDir = path.join(__dirname, 'qrcodes');
+
+    // Create qrcodes folder if it doesn't exist
+    if (!fs.existsSync(qrDir)) {
+      fs.mkdirSync(qrDir, { recursive: true });
+    }
+
+    const filePath = path.join(qrDir, `${certificateId}.png`);
+
     const url = `${process.env.FRONTEND_URL}/verify.html?id=${certificateId}&token=${token}`;
-    await QRCode.toFile(`./qrcodes/${certificateId}.png`, url);
+
+    await QRCode.toFile(filePath, url);
 
     console.log(`QR generated for ${certificateId}`);
   } catch (error) {
