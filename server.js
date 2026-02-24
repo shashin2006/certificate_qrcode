@@ -194,7 +194,7 @@ app.get('/download/:id', (req, res) => {
 
   res.download(filePath, `${certificateId}.png`);
 });
-});
+
 // =============================
 // START SERVER
 // =============================
