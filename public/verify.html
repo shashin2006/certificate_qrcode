@@ -47,7 +47,7 @@
   const certificateId = params.get('id');
   const token = params.get('token');
 
-  fetch(`http://localhost:5000/verify/${certificateId}?token=${token}`)
+  fetch(`https://certificate-qrcode-2.onrender.com/verify/${certificateId}?token=${token}`)
     .then(res => res.json())
     .then(data => {
       const statusDiv = document.getElementById("status");
