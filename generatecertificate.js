@@ -40,31 +40,35 @@ async function createCertificate(name, certificateId) {
     ctx.fillText(name, centerX, nameY);
 
     // =============================
-// ADD CERTIFICATE ID (Top Center)
 // =============================
-ctx.font = "bold 28px Arial";
-ctx.fillStyle = "#444";
+// ADD CERTIFICATE ID (Above Title - Centered)
+// =============================
+ctx.font = "bold 30px Arial";
+ctx.fillStyle = "#333";
 ctx.textAlign = "center";
 
-// Adjust Y if needed (around top area)
-const certIdY = 260;  
+// Position slightly below top header area
+const certIdX = template.width / 2;
+const certIdY = 230;   // Adjust between 210–250 if needed
 
-ctx.fillText(`Certificate ID: ${certificateId}`, template.width / 2, certIdY);
-
+ctx.fillText(`Certificate ID: ${certificateId}`, certIdX, certIdY);
     // =============================
-    // ADD QR CODE (Right Middle Area)
     // =============================
-    const qrSize = 180;
-    
-    // Move slightly inward from right edge
-    const qrX = template.width - qrSize - 120;
-    
-    // Place vertically around participation text area
-    const qrY = template.height / 2 - qrSize / 2 + 50;
-    
-    ctx.drawImage(qr, qrX, qrY, qrSize, qrSize);
+// ADD QR CODE (Right Side Middle)
+// =============================
+const qrSize = 190;
 
-    ctx.drawImage(qr, qrX, qrY, qrSize, qrSize);
+// Move slightly inward from right border
+const qrX = template.width - qrSize - 160;
+
+// Move upward to white area (not bottom)
+const qrY = 620;   // Adjust between 580–650 if needed
+
+// Optional white background padding
+ctx.fillStyle = "white";
+ctx.fillRect(qrX - 10, qrY - 10, qrSize + 20, qrSize + 20);
+
+ctx.drawImage(qr, qrX, qrY, qrSize, qrSize);
 
     // Save certificate
     const outputPath = path.join(certDir, `${certificateId}.png`);
