@@ -86,7 +86,7 @@ app.post('/issue', async (req, res) => {
     await generateQR(certificateId, token);
 
     // Generate Certificate Image
-    await createCertificate(name, certificateId);
+    await createCertificate(name, certificateId,results[i].year);
 
     // Save to DB
     const cert = new Certificate({
@@ -95,7 +95,8 @@ app.post('/issue', async (req, res) => {
       department: "CSE",
       event: "BYTEFEST 2K26",
       issuedDate: new Date(),
-      token
+      token,
+      year: results[i].year
     });
 
     await cert.save();
