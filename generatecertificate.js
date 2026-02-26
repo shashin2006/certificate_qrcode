@@ -56,15 +56,14 @@ ctx.fillText(`Certificate ID: ${certificateId}`, certIdX, certIdY);
 
 // ADD YEAR (Second Line Blank Area)
 // =============================
-ctx.font = "bold 38px Arial";
+ctx.font = "bold 40px Arial";
 ctx.fillStyle = "black";
 ctx.textAlign = "center";
 
-// Adjust this Y slightly if needed
-const yearX = template.width / 2;
-const yearY = 780;   // 🔥 This aligns with second underline
+const yearText = `${year} Year`;
+const yearY = 780;   // adjust if needed
 
-ctx.fillText(`${year} Year`, yearX, yearY);
+ctx.fillText(yearText, template.width / 2, yearY);
 // =============================
 // ADD QR CODE (Exact Marked Area)
 // =============================
