@@ -176,16 +176,16 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 // =============================
 // GET CERTIFICATE IMAGE (Preview)
 // =============================
-app.get('/certificate-image/:id', (req, res) => {
-  const certificateId = req.params.id;
+app.get('/certificate-image/:id', async (req, res) => {
+  const cert = await Certificate.findOne({
+    certificateId: req.params.id
+  });
 
-  const filePath = path.join(__dirname, 'certificates', `${certificateId}.png`);
-
-  if (!fs.existsSync(filePath)) {
+  if (!cert) {
     return res.status(404).json({ message: "Certificate not found" });
   }
 
-  res.sendFile(filePath);
+  res.json({ imageUrl: cert.imageUrl });
 });
 // =============================
 // VERIFY CERTIFICATE API
