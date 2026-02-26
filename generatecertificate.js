@@ -2,16 +2,6 @@ const { createCanvas, loadImage } = require('canvas');
 const fs = require('fs');
 const path = require('path');
 const cloudinary = require('cloudinary').v2;
-const buffer = canvas.toBuffer("image/png");
-const uploadResult = await cloudinary.uploader.upload(
-  `data:image/png;base64,${buffer.toString("base64")}`,
-  {
-    folder: "certificates",
-    public_id: certificateId
-  }
-);
-
-return uploadResult.secure_url;
 async function createCertificate(name, certificateId, year) {
   try {
 
@@ -53,41 +43,53 @@ async function createCertificate(name, certificateId, year) {
 // =============================
 // ADD CERTIFICATE ID (Perfect Position)
 // =============================
-ctx.font = "bold 32px Arial";
-ctx.fillStyle = "#2b2b2b";
-ctx.textAlign = "center";
-ctx.textBaseline = "middle";
+    ctx.font = "bold 32px Arial";
+    ctx.fillStyle = "#2b2b2b";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    
+    // This value is calibrated for your template
+    const certIdX = template.width / 2;
+    const certIdY = 300;   // 🔥 Correct vertical alignment
+    
+    ctx.fillText(`Certificate ID: ${certificateId}`, certIdX, certIdY);
+    
+    // ADD YEAR (Second Line Blank Area)
+    // =============================
+    ctx.font = "bold 40px Arial";
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center";
+    
+    const yearText = `${year} Year`;
+    const yearY = 780;   // adjust if needed
+    
+    ctx.fillText(yearText, template.width / 2, yearY);
+    // =============================
+    // ADD QR CODE (Exact Marked Area)
+    // =============================
+    const qrSize = 200;
+    
+    // Exact placement tuned for your template
+    const qrX = 1580;   // 🔥 Fixed X position
+    const qrY = 610;    // 🔥 Fixed Y position
+    
+    // Clean white background padding
+    ctx.fillStyle = "white";
+    ctx.fillRect(qrX - 12, qrY - 12, qrSize + 24, qrSize + 24);
+    
+    ctx.drawImage(qr, qrX, qrY, qrSize, qrSize);
 
-// This value is calibrated for your template
-const certIdX = template.width / 2;
-const certIdY = 300;   // 🔥 Correct vertical alignment
+    const buffer = canvas.toBuffer("image/png");
+    const uploadResult = await cloudinary.uploader.upload(
+      `data:image/png;base64,${buffer.toString("base64")}`,
+      {
+        folder: "certificates",
+        public_id: certificateId
+      }
+    );
 
-ctx.fillText(`Certificate ID: ${certificateId}`, certIdX, certIdY);
-
-// ADD YEAR (Second Line Blank Area)
-// =============================
-ctx.font = "bold 40px Arial";
-ctx.fillStyle = "black";
-ctx.textAlign = "center";
-
-const yearText = `${year} Year`;
-const yearY = 780;   // adjust if needed
-
-ctx.fillText(yearText, template.width / 2, yearY);
-// =============================
-// ADD QR CODE (Exact Marked Area)
-// =============================
-const qrSize = 200;
-
-// Exact placement tuned for your template
-const qrX = 1580;   // 🔥 Fixed X position
-const qrY = 610;    // 🔥 Fixed Y position
-
-// Clean white background padding
-ctx.fillStyle = "white";
-ctx.fillRect(qrX - 12, qrY - 12, qrSize + 24, qrSize + 24);
-
-ctx.drawImage(qr, qrX, qrY, qrSize, qrSize);
+    return uploadResult.secure_url;
+        
 
     // Save certificate
     const outputPath = path.join(certDir, `${certificateId}.png`);
