@@ -40,20 +40,29 @@ async function createCertificate(name, certificateId) {
     ctx.fillText(name, centerX, nameY);
 
     // =============================
-    // ADD CERTIFICATE ID
-    // =============================
-    ctx.font = "28px Arial";
-    ctx.textAlign = "left";
-    ctx.fillText(`ID: ${certificateId}`, 120, template.height - 80);
+// ADD CERTIFICATE ID (Top Center)
+// =============================
+ctx.font = "bold 28px Arial";
+ctx.fillStyle = "#444";
+ctx.textAlign = "center";
+
+// Adjust Y if needed (around top area)
+const certIdY = 260;  
+
+ctx.fillText(`Certificate ID: ${certificateId}`, template.width / 2, certIdY);
 
     // =============================
-    // ADD QR CODE
+    // ADD QR CODE (Right Middle Area)
     // =============================
-    const qrSize = 200;
-    const margin = 60;
-
-    const qrX = template.width - qrSize - margin;
-    const qrY = template.height - qrSize - margin;
+    const qrSize = 180;
+    
+    // Move slightly inward from right edge
+    const qrX = template.width - qrSize - 120;
+    
+    // Place vertically around participation text area
+    const qrY = template.height / 2 - qrSize / 2 + 50;
+    
+    ctx.drawImage(qr, qrX, qrY, qrSize, qrSize);
 
     ctx.drawImage(qr, qrX, qrY, qrSize, qrSize);
 
