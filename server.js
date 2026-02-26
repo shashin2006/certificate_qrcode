@@ -118,7 +118,9 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     const filePath = req.file.path;
 
     fs.createReadStream(filePath)
-      .pipe(csv())
+      .pipe(csv({
+        mapHeaders: ({ header }) => header.trim().toLowerCase()
+      }))
       .on('data', (data) => results.push(data))
       .on('end', async () => {
 
