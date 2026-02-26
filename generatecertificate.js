@@ -1,7 +1,6 @@
 const { createCanvas, loadImage } = require('canvas');
 const fs = require('fs');
-const path = require('path')
-  ;
+const path = require('path');
 const cloudinary = require('cloudinary').v2;
 const buffer = canvas.toBuffer("image/png");
 const uploadResult = await cloudinary.uploader.upload(
