@@ -72,10 +72,10 @@ async function generateQR(certificateId, token) {
 // =============================
 app.post('/issue', async (req, res) => {
   try {
-    const { name } = req.body;
-
-    if (!name) {
-      return res.status(400).json({ message: "Name is required" });
+    const { name, year } = req.body;
+    
+    if (!name || !year) {
+      return res.status(400).json({ message: "Name and Year are required" });
     }
 
     const count = await Certificate.countDocuments();
