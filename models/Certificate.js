@@ -6,7 +6,8 @@ const certificateSchema = new mongoose.Schema({
   department: String,
   event: String,
   issuedDate: Date,
-  token: String
+  token: String,
+  imageUrl: String
 });
 
 module.exports = mongoose.model("Certificate", certificateSchema);
