@@ -2,7 +2,7 @@ const { createCanvas, loadImage } = require('canvas');
 const fs = require('fs');
 const path = require('path');
 
-async function createCertificate(name, certificateId,year) {
+async function createCertificate(name, certificateId, year) {
   try {
 
     // Absolute paths (production safe)
