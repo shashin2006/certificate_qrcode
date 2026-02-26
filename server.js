@@ -91,7 +91,7 @@ app.post('/issue', async (req, res) => {
     await generateQR(certificateId, token);
 
     // ✅ Use year directly (NOT results[i])
-    await createCertificate(name, certificateId, year);
+    const imageUrl = await createCertificate(name, certificateId, year);
 
     const cert = new Certificate({
       certificateId,
@@ -100,7 +100,8 @@ app.post('/issue', async (req, res) => {
       event: "BYTEFEST 2K26",
       issuedDate: new Date(),
       token,
-      year
+      year,
+      imageUrl
     });
 
     await cert.save();
@@ -142,11 +143,11 @@ app.post('/upload', upload.single('file'), async (req, res) => {
         
           await generateQR(certificateId, token);
         
-          await createCertificate(
-            results[i].name,
-            certificateId,
-            results[i].year
-          );
+          const imageUrl = await createCertificate(
+              results[i].name,
+              certificateId,
+              results[i].year
+            );
         
           const cert = new Certificate({
             certificateId,
@@ -155,7 +156,8 @@ app.post('/upload', upload.single('file'), async (req, res) => {
             event: "BYTEFEST 2K26",
             issuedDate: new Date(),
             token,
-            year: results[i].year
+            year: results[i].year,
+            imageUrl
           });
         
           await cert.save();
