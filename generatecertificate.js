@@ -41,32 +41,32 @@ async function createCertificate(name, certificateId) {
 
     // =============================
 // =============================
-// ADD CERTIFICATE ID (Above Title - Centered)
+// ADD CERTIFICATE ID (Perfect Position)
 // =============================
-ctx.font = "bold 30px Arial";
-ctx.fillStyle = "#333";
+ctx.font = "bold 32px Arial";
+ctx.fillStyle = "#2b2b2b";
 ctx.textAlign = "center";
+ctx.textBaseline = "middle";
 
-// Position slightly below top header area
+// This value is calibrated for your template
 const certIdX = template.width / 2;
-const certIdY = 230;   // Adjust between 210–250 if needed
+const certIdY = 300;   // 🔥 Correct vertical alignment
 
 ctx.fillText(`Certificate ID: ${certificateId}`, certIdX, certIdY);
     // =============================
     // =============================
-// ADD QR CODE (Right Side Middle)
 // =============================
-const qrSize = 190;
+// ADD QR CODE (Exact Marked Area)
+// =============================
+const qrSize = 200;
 
-// Move slightly inward from right border
-const qrX = template.width - qrSize - 160;
+// Exact placement tuned for your template
+const qrX = 1580;   // 🔥 Fixed X position
+const qrY = 610;    // 🔥 Fixed Y position
 
-// Move upward to white area (not bottom)
-const qrY = 580;   // Adjust between 580–650 if needed
-
-// Optional white background padding
+// Clean white background padding
 ctx.fillStyle = "white";
-ctx.fillRect(qrX - 10, qrY - 10, qrSize + 20, qrSize + 20);
+ctx.fillRect(qrX - 12, qrY - 12, qrSize + 24, qrSize + 24);
 
 ctx.drawImage(qr, qrX, qrY, qrSize, qrSize);
 
