@@ -62,7 +62,7 @@ const qrSize = 190;
 const qrX = template.width - qrSize - 160;
 
 // Move upward to white area (not bottom)
-const qrY = 620;   // Adjust between 580–650 if needed
+const qrY = 580;   // Adjust between 580–650 if needed
 
 // Optional white background padding
 ctx.fillStyle = "white";
