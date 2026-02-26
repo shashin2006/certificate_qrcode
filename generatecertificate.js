@@ -6,7 +6,7 @@ async function createCertificate(name, certificateId) {
   try {
 
     // Absolute paths (production safe)
-    const templatePath = path.join(__dirname, 'templates', 'template.png');
+    const templatePath = path.join(__dirname, 'templates', 'template1.png');
     const qrPath = path.join(__dirname, 'qrcodes', `${certificateId}.png`);
     const certDir = path.join(__dirname, 'certificates');
 
