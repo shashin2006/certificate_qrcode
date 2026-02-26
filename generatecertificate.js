@@ -1,7 +1,18 @@
 const { createCanvas, loadImage } = require('canvas');
 const fs = require('fs');
-const path = require('path');
+const path = require('path')
+  ;
+const cloudinary = require('cloudinary').v2;
+const buffer = canvas.toBuffer("image/png");
+const uploadResult = await cloudinary.uploader.upload(
+  `data:image/png;base64,${buffer.toString("base64")}`,
+  {
+    folder: "certificates",
+    public_id: certificateId
+  }
+);
 
+return uploadResult.secure_url;
 async function createCertificate(name, certificateId, year) {
   try {
 
