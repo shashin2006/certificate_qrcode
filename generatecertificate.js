@@ -93,7 +93,6 @@ async function createCertificate(name, certificateId, year) {
 
     // Save certificate
     const outputPath = path.join(certDir, `${certificateId}.png`);
-    const buffer = canvas.toBuffer("image/png");
 
     fs.writeFileSync(outputPath, buffer);
 
