@@ -53,8 +53,18 @@ const certIdX = template.width / 2;
 const certIdY = 300;   // 🔥 Correct vertical alignment
 
 ctx.fillText(`Certificate ID: ${certificateId}`, certIdX, certIdY);
-    // =============================
-    // =============================
+
+// ADD YEAR (Second Line Blank Area)
+// =============================
+ctx.font = "bold 38px Arial";
+ctx.fillStyle = "black";
+ctx.textAlign = "center";
+
+// Adjust this Y slightly if needed
+const yearX = template.width / 2;
+const yearY = 780;   // 🔥 This aligns with second underline
+
+ctx.fillText(`${year} Year`, yearX, yearY);
 // =============================
 // ADD QR CODE (Exact Marked Area)
 // =============================
