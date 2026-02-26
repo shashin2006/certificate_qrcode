@@ -73,7 +73,7 @@ async function generateQR(certificateId, token) {
 app.post('/issue', async (req, res) => {
   try {
     const { name, year } = req.body;
-    
+
     if (!name || !year) {
       return res.status(400).json({ message: "Name and Year are required" });
     }
@@ -82,13 +82,10 @@ app.post('/issue', async (req, res) => {
     const certificateId = generateCertificateId(count + 1);
     const token = generateToken();
 
-    // Generate QR
     await generateQR(certificateId, token);
 
-    // Generate Certificate Image
-    await createCertificate(name, certificateId,results[i].year);
+    await createCertificate(results[i].name, certificateId, results[i].year);  // ✅ Correct
 
-    // Save to DB
     const cert = new Certificate({
       certificateId,
       name,
@@ -96,7 +93,7 @@ app.post('/issue', async (req, res) => {
       event: "BYTEFEST 2K26",
       issuedDate: new Date(),
       token,
-      year: results[i].year
+      year:results[i].year
     });
 
     await cert.save();
