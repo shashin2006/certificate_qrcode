@@ -84,7 +84,8 @@ app.post('/issue', async (req, res) => {
 
     await generateQR(certificateId, token);
 
-    await createCertificate(results[i].name, certificateId, results[i].year);  // ✅ Correct
+    // ✅ Use year directly (NOT results[i])
+    await createCertificate(name, certificateId, year);
 
     const cert = new Certificate({
       certificateId,
@@ -93,7 +94,7 @@ app.post('/issue', async (req, res) => {
       event: "BYTEFEST 2K26",
       issuedDate: new Date(),
       token,
-      year:results[i].year
+      year
     });
 
     await cert.save();
@@ -126,19 +127,25 @@ app.post('/upload', upload.single('file'), async (req, res) => {
           const count = await Certificate.countDocuments();
           const certificateId = generateCertificateId(count + 1);
           const token = generateToken();
-
+        
           await generateQR(certificateId, token);
-          await createCertificate(results[i].name, certificateId);
-
+        
+          await createCertificate(
+            results[i].name,
+            certificateId,
+            results[i].year
+          );
+        
           const cert = new Certificate({
             certificateId,
             name: results[i].name,
             department: "CSE",
             event: "BYTEFEST 2K26",
             issuedDate: new Date(),
-            token
+            token,
+            year: results[i].year
           });
-
+        
           await cert.save();
         }
 
