@@ -123,6 +123,10 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       .on('end', async () => {
 
         for (let i = 0; i < results.length; i++) {
+          console.log("FULL ROW OBJECT:", results[i]);
+          console.log("NAME VALUE:", results[i].name);
+          console.log("YEAR VALUE:", results[i].year);
+          console.log("KEYS:", Object.keys(results[i]));
 
           const count = await Certificate.countDocuments();
           const certificateId = generateCertificateId(count + 1);
