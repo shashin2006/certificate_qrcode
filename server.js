@@ -16,6 +16,7 @@ const { generateCertificateId, generateToken } = require('./utils/generateId');
 const createCertificate = require('./generatecertificate');
 const cloudinary = require('cloudinary').v2;
 
+dotenv.config();
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -24,7 +25,7 @@ cloudinary.config({
 // =============================
 // CONFIGURATION
 // =============================
-dotenv.config();
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
