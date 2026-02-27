@@ -194,11 +194,11 @@ app.get('/certificate-image/:id', async (req, res) => {
 // =============================
 app.get('/verify', async (req, res) => {
   try {
-    const { id } = req.query.id;
-    const { token } = req.query.token;
+    const id = req.query.id;
+    const token = req.query.token;
 
     if (!id || !token) {
-      return res.status(400).json({ valid: false, message: "Missing token or ID" });
+      return res.status(400).json({ valid: false });
     }
 
     const cert = await Certificate.findOne({
