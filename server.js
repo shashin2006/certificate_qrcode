@@ -63,8 +63,9 @@ async function generateQR(certificateId, token) {
 
     const filePath = path.join(qrDir, `${certificateId}.png`);
 
-    const url = `${process.env.FRONTEND_URL}/verify.html?id=${certificateId}&token=${token}`;
-
+    const encodedId = encodeURIComponent(certificateId);
+    
+    const url = `${process.env.FRONTEND_URL}/verify.html?id=${encodedId}&token=${token}`;
     await QRCode.toFile(filePath, url);
 
     console.log(`QR generated for ${certificateId}`);
@@ -191,10 +192,10 @@ app.get('/certificate-image/:id', async (req, res) => {
 // =============================
 // VERIFY CERTIFICATE API
 // =============================
-app.get('/verify/:id', async (req, res) => {
+app.get('/verify', async (req, res) => {
   try {
-    const { id } = req.params;
-    const { token } = req.query;
+    const { id } = req.query.id;
+    const { token } = req.query.token;
 
     if (!id || !token) {
       return res.status(400).json({ valid: false, message: "Missing token or ID" });
