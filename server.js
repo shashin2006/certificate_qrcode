@@ -65,7 +65,7 @@ async function generateQR(certificateId, token) {
 
     const encodedId = encodeURIComponent(certificateId);
     
-    const url = `${process.env.FRONTEND_URL}/verify.html?id=${encodedId}&token=${token}`;
+    const url = `${process.env.FRONTEND_URL}/verify.html?id=${certificateId}&token=${token}`;
     await QRCode.toFile(filePath, url);
 
     console.log(`QR generated for ${certificateId}`);
