@@ -54,7 +54,7 @@ async function createCertificate(name, certificateId, year) {
     ctx.textAlign = "right";
     ctx.textBaseline = "top";
     
-    const certIdX = template.width - 200;  // 🔥 move near right margin
+    const certIdX = template.width - 250;  // 🔥 move near right margin
     const certIdY = 240;                   // 🔥 slightly below header
     
     ctx.fillText(`Certificate ID: ${certificateId}`, certIdX, certIdY);
