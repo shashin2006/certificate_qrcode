@@ -93,7 +93,7 @@ app.post('/issue', async (req, res) => {
     await generateQR(certificateId, token);
 
     // ✅ Use year directly (NOT results[i])
-    const imageUrl = await createCertificate(name, certificateId, year);
+    const imageUrl = await createCertificate(name, certificateId, year,position);
 
     const cert = new Certificate({
       certificateId,
@@ -148,7 +148,8 @@ app.post('/upload', upload.single('file'), async (req, res) => {
           const imageUrl = await createCertificate(
               results[i].name,
               certificateId,
-              results[i].year
+              results[i].year,
+              results[i].position
             );
         
           const cert = new Certificate({
