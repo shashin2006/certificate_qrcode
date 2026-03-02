@@ -3,10 +3,13 @@ const fs = require('fs');
 const path = require('path');
 const cloudinary = require('cloudinary').v2;
 
-async function createCertificate(name, certificateId, year, position) {
+async function createCertificate(name, certificateId, year, position, templateName) {
+
+  templateName = templateName || 'template1.png';
+
   try {
 
-    const templatePath = path.join(__dirname, 'templates', 'template1.png');
+    const templatePath = path.join(__dirname, 'templates', templateName);
     const qrPath = path.join(__dirname, 'qrcodes', `${certificateId}.png`);
     const certDir = path.join(__dirname, 'certificates');
 
@@ -23,61 +26,56 @@ async function createCertificate(name, certificateId, year, position) {
     ctx.drawImage(template, 0, 0);
 
     // =============================
-    // NAME (No Change)
+    // NAME (UNCHANGED)
     // =============================
     ctx.font = "bold 60px Arial";
     ctx.fillStyle = "black";
     ctx.textAlign = "center";
     ctx.textBaseline = "alphabetic";
 
-    ctx.fillText(name, template.width / 2, 740);
+    ctx.fillText(name, template.width / 2, 720);
 
     // =============================
-    // CERTIFICATE ID (No Change)
+    // CERTIFICATE ID (UNCHANGED)
     // =============================
-    ctx.font = "bold 30px Arial";
-    ctx.fillStyle = "#333";
-    ctx.textAlign = "left";
-    ctx.textBaseline = "top";
+    ctx.font = "bold 32px Arial";
+    ctx.fillStyle = "#2b2b2b";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
 
-    ctx.fillText(
-      `Certificate ID: ${certificateId}`,
-      template.width + 300,
-      240
-    );
+    const certIdX = template.width / 2 - 400;
+    const certIdY = 300;
+
+    ctx.fillText(`Certificate ID: ${certificateId}`, certIdX, certIdY);
 
     // =============================
-    // YEAR (Clean Alignment)
+    // YEAR (UNCHANGED)
     // =============================
     ctx.font = "bold 40px Arial";
     ctx.fillStyle = "black";
     ctx.textAlign = "center";
 
-    ctx.fillText(
-      `${year} Year`,
-      template.width / 2 - 250,
-      780
-    );
+    ctx.fillText(`${year} Year`, template.width / 2, 780);
 
     // =============================
-    // POSITION (NEW – CLEAN)
+    // ✅ POSITION (NEW — PROPER ALIGNMENT)
     // =============================
     ctx.font = "bold 40px Arial";
     ctx.fillStyle = "black";
     ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
 
-    // Position fits inside small blank before word "position"
-    ctx.fillText(
-      position,
-      760,   // horizontal adjustment
-      820    // vertical alignment
-    );
+    // Adjusted to fit inside blank before word "position"
+    const positionX = 760;   // move left/right if needed
+    const positionY = 835;   // move up/down if needed
+
+    ctx.fillText(position, positionX, positionY);
 
     // =============================
-    // QR CODE (No Change)
+    // QR CODE (UNCHANGED)
     // =============================
     const qrSize = 200;
-    const qrX = template.width - 330;
+    const qrX = 1580;
     const qrY = 500;
 
     ctx.fillStyle = "white";
@@ -87,17 +85,10 @@ async function createCertificate(name, certificateId, year, position) {
 
     const buffer = canvas.toBuffer("image/png");
 
-    const uploadResult = await cloudinary.uploader.upload(
-      `data:image/png;base64,${buffer.toString("base64")}`,
-      {
-        folder: "certificates",
-        public_id: certificateId
-      }
-    );
+    const outputPath = path.join(certDir, `${certificateId}.png`);
+    fs.writeFileSync(outputPath, buffer);
 
-    console.log(`✅ Certificate created for ${name}`);
-
-    return uploadResult.secure_url;
+    return `http://localhost:5000/certificates/${certificateId}.png`;
 
   } catch (error) {
     console.error("Certificate Generation Error:", error);
