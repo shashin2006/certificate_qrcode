@@ -37,12 +37,12 @@ async function createCertificate(name, certificateId, year, position) {
     // =============================
     ctx.font = "bold 30px Arial";
     ctx.fillStyle = "#333";
-    ctx.textAlign = "right";
+    ctx.textAlign = "left";
     ctx.textBaseline = "top";
 
     ctx.fillText(
       `Certificate ID: ${certificateId}`,
-      template.width - 200,
+      template.width + 300,
       240
     );
 
