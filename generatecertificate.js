@@ -35,7 +35,7 @@ async function createCertificate(name, certificateId, year) {
     ctx.textBaseline = "alphabetic";
 
     const centerX = template.width / 2;
-    const nameY = 740; // adjust if needed
+    const nameY = 720; // adjust if needed
 
     ctx.fillText(name, centerX, nameY);
 
@@ -47,43 +47,36 @@ async function createCertificate(name, certificateId, year) {
     ctx.fillStyle = "#2b2b2b";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    
+
     // This value is calibrated for your template
-    ctx.font = "bold 30px Arial";
-    ctx.fillStyle = "#333";
-    ctx.textAlign = "right";
-    ctx.textBaseline = "top";
-    
-    const certIdX = template.width - 250;  // 🔥 move near right margin
-    const certIdY = 240;                   // 🔥 slightly below header
-    
+    const certIdX = template.width / 2 - 300;
+    const certIdY = 300;   // 🔥 Correct vertical alignment
+
     ctx.fillText(`Certificate ID: ${certificateId}`, certIdX, certIdY);
-    
-    ctx.fillText(`Certificate ID: ${certificateId}`, certIdX, certIdY);
-    
+
     // ADD YEAR (Second Line Blank Area)
     // =============================
     ctx.font = "bold 40px Arial";
     ctx.fillStyle = "black";
     ctx.textAlign = "center";
-    
+
     const yearText = `${year} Year`;
     const yearY = 780;   // adjust if needed
-    
-    ctx.fillText(yearText, template.width / 2 -250 , 780);
+
+    ctx.fillText(yearText, template.width / 2, yearY);
     // =============================
     // ADD QR CODE (Exact Marked Area)
     // =============================
     const qrSize = 200;
-    
+
     // Exact placement tuned for your template
-    const qrX = template.width - 330;   // 🔥 Fixed X position
+    const qrX = 1580;   // 🔥 Fixed X position
     const qrY = 500;    // 🔥 Fixed Y position
-    
+
     // Clean white background padding
     ctx.fillStyle = "white";
     ctx.fillRect(qrX - 12, qrY - 12, qrSize + 24, qrSize + 24);
-    
+
     ctx.drawImage(qr, qrX, qrY, qrSize, qrSize);
 
     const buffer = canvas.toBuffer("image/png");
@@ -96,10 +89,11 @@ async function createCertificate(name, certificateId, year) {
     );
 
     return uploadResult.secure_url;
-        
+
 
     // Save certificate
     const outputPath = path.join(certDir, `${certificateId}.png`);
+    const buffer = canvas.toBuffer("image/png");
 
     fs.writeFileSync(outputPath, buffer);
 
