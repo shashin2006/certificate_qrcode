@@ -9,7 +9,7 @@ const TYPE = "PR";         // PR = Participation
 
 function generateCertificateId(number) {
   const serial = String(number).padStart(3, '0');
-  return `RMKCET-CSE-PROJEXPO-FEB26-PR-${serial}`;
+  return `RMKCET-CSE-PROJEXPO-FEB26-AC-${serial}`;
 }
 
 function generateToken() {
