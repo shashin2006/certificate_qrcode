@@ -1,107 +1,109 @@
-const { createCanvas, loadImage } = require('canvas');
-const fs = require('fs');
-const path = require('path');
-const cloudinary = require('cloudinary').v2;
+const { createCanvas, loadImage } = require('canvas')
+const fs = require('fs')
+const path = require('path')
+const cloudinary = require('cloudinary').v2
+
 async function createCertificate(name, certificateId, year) {
   try {
-
-    // Absolute paths (production safe)
-    const templatePath = path.join(__dirname, 'templates', 'template1.png');
-    const qrPath = path.join(__dirname, 'qrcodes', `${certificateId}.png`);
-    const certDir = path.join(__dirname, 'certificates');
-
-    // Create certificates folder if not exists
-    if (!fs.existsSync(certDir)) {
-      fs.mkdirSync(certDir, { recursive: true });
-    }
-
-    // Load template & QR
-    const template = await loadImage(templatePath);
-    const qr = await loadImage(qrPath);
-
-    // Create canvas
-    const canvas = createCanvas(template.width, template.height);
-    const ctx = canvas.getContext('2d');
-
-    // Draw template
-    ctx.drawImage(template, 0, 0);
+    // =============================
+    // Paths
+    // =============================
+    const templatePath = path.join(__dirname, 'templates', 'template1.png')
+    const qrPath = path.join(__dirname, 'qrcodes', `${certificateId}.png`)
 
     // =============================
-    // ADD PARTICIPANT NAME
+    // Load Images
     // =============================
-    ctx.font = "bold 60px Arial";
-    ctx.fillStyle = "black";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "alphabetic";
-
-    const centerX = template.width / 2;
-    const nameY = 720; // adjust if needed
-
-    ctx.fillText(name, centerX, nameY);
+    const template = await loadImage(templatePath)
+    const qr = await loadImage(qrPath)
 
     // =============================
-// =============================
-// ADD CERTIFICATE ID (Perfect Position)
-// =============================
-    ctx.font = "bold 32px Arial";
-    ctx.fillStyle = "#2b2b2b";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    
-    // This value is calibrated for your template
-    const certIdX = template.width / 2;
-    const certIdY = 300;   // 🔥 Correct vertical alignment
-    
-    ctx.fillText(`Certificate ID: ${certificateId}`, certIdX, certIdY);
-    
-    // ADD YEAR (Second Line Blank Area)
+    // Create Canvas
     // =============================
-    ctx.font = "bold 40px Arial";
-    ctx.fillStyle = "black";
-    ctx.textAlign = "center";
-    
-    const yearText = `${year} Year`;
-    const yearY = 780;   // adjust if needed
-    
-    ctx.fillText(yearText, template.width / 2, yearY);
-    // =============================
-    // ADD QR CODE (Exact Marked Area)
-    // =============================
-    const qrSize = 200;
-    
-    // Exact placement tuned for your template
-    const qrX = 1580;   // 🔥 Fixed X position
-    const qrY = 610;    // 🔥 Fixed Y position
-    
-    // Clean white background padding
-    ctx.fillStyle = "white";
-    ctx.fillRect(qrX - 12, qrY - 12, qrSize + 24, qrSize + 24);
-    
-    ctx.drawImage(qr, qrX, qrY, qrSize, qrSize);
+    const canvas = createCanvas(template.width, template.height)
+    const ctx = canvas.getContext('2d')
 
-    const buffer = canvas.toBuffer("image/png");
+    // Draw template background
+    ctx.drawImage(template, 0, 0)
+
+    // =========================================================
+    // 1️⃣ PARTICIPANT NAME
+    // =========================================================
+    ctx.font = "bold 60px Arial"
+    ctx.fillStyle = "#000000"
+    ctx.textAlign = "center"
+    ctx.textBaseline = "alphabetic"
+
+    ctx.fillText(
+      name,
+      template.width / 2,
+      740   // Perfect alignment with blank line
+    )
+
+    // =========================================================
+    // 2️⃣ CERTIFICATE ID (Top Right Clean Area)
+    // =========================================================
+    ctx.font = "bold 30px Arial"
+    ctx.fillStyle = "#333333"
+    ctx.textAlign = "right"
+    ctx.textBaseline = "top"
+
+    ctx.fillText(
+      `Certificate ID: ${certificateId}`,
+      template.width - 200,   // Right margin
+      240                     // Below header banner
+    )
+
+    // =========================================================
+    // 3️⃣ YEAR
+    // =========================================================
+    ctx.font = "bold 40px Arial"
+    ctx.fillStyle = "#000000"
+    ctx.textAlign = "center"
+
+    ctx.fillText(
+      `${year} Year`,
+      template.width / 2 - 250,
+      780
+    )
+
+    // =========================================================
+    // 4️⃣ QR CODE (Raised Position)
+    // =========================================================
+    const qrSize = 200
+    const qrX = template.width - 330
+    const qrY = 500
+
+    // White padding background
+    ctx.fillStyle = "#ffffff"
+    ctx.fillRect(qrX - 12, qrY - 12, qrSize + 24, qrSize + 24)
+
+    ctx.drawImage(qr, qrX, qrY, qrSize, qrSize)
+
+    // =========================================================
+    // Convert to Buffer
+    // =========================================================
+    const buffer = canvas.toBuffer("image/png")
+
+    // =========================================================
+    // Upload to Cloudinary
+    // =========================================================
     const uploadResult = await cloudinary.uploader.upload(
       `data:image/png;base64,${buffer.toString("base64")}`,
       {
         folder: "certificates",
         public_id: certificateId
       }
-    );
+    )
 
-    return uploadResult.secure_url;
-        
+    console.log(`✅ Certificate created for ${name}`)
 
-    // Save certificate
-    const outputPath = path.join(certDir, `${certificateId}.png`);
-
-    fs.writeFileSync(outputPath, buffer);
-
-    console.log(`✅ Certificate created for ${name}`);
+    return uploadResult.secure_url
 
   } catch (error) {
-    console.error("Certificate Generation Error:", error);
-    throw error; // important for bulk upload
+    console.error("Certificate Generation Error:", error)
+    throw error
   }
 }
 
-module.exports = createCertificate;
+module.exports = createCertificate
