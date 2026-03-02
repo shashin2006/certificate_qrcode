@@ -49,7 +49,7 @@ async function createCertificate(name, certificateId, year) {
     ctx.textBaseline = "middle";
 
     // This value is calibrated for your template
-    const certIdX = template.width / 2 - 300;
+    const certIdX = template.width / 2 - 350;
     const certIdY = 300;   // 🔥 Correct vertical alignment
 
     ctx.fillText(`Certificate ID: ${certificateId}`, certIdX, certIdY);
