@@ -58,7 +58,6 @@ async function createCertificate(name, certificateId, year) {
     const certIdY = 240;                   // 🔥 slightly below header
     
     ctx.fillText(`Certificate ID: ${certificateId}`, certIdX, certIdY);
-    const certIdY = 300;   // 🔥 Correct vertical alignment
     
     ctx.fillText(`Certificate ID: ${certificateId}`, certIdX, certIdY);
     
