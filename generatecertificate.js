@@ -19,6 +19,9 @@ async function createCertificate(name, certificateId, year,position) {
     const template = await loadImage(templatePath);
     const qr = await loadImage(qrPath);
 
+    const sign1 = await loadImage(path.join(__dirname, 'signatures', 'sign1.png'));
+    const sign2 = await loadImage(path.join(__dirname, 'signatures', 'sign2.png'));
+    const sign3 = await loadImage(path.join(__dirname, 'signatures', 'sign3.png'));
     // Create canvas
     const canvas = createCanvas(template.width, template.height);
     const ctx = canvas.getContext('2d');
@@ -91,6 +94,18 @@ async function createCertificate(name, certificateId, year,position) {
     ctx.fillRect(qrX - 12, qrY - 12, qrSize + 24, qrSize + 24);
 
     ctx.drawImage(qr, qrX, qrY, qrSize, qrSize);
+    // =============================
+    // ADD SIGNATURES
+    // =============================
+      
+    // signature size
+    const signWidth = 220;
+    const signHeight = 90;
+      
+      // signature positions
+    ctx.drawImage(sign1, 420, 1040, signWidth, signHeight);
+    ctx.drawImage(sign2, 900, 1040, signWidth, signHeight);
+    ctx.drawImage(sign3, 1380, 1040, signWidth, signHeight);
 
     const buffer = canvas.toBuffer("image/png");
     const uploadResult = await cloudinary.uploader.upload(
