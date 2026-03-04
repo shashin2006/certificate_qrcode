@@ -2,7 +2,7 @@ const { createCanvas, loadImage } = require('canvas');
 const fs = require('fs');
 const path = require('path');
 const cloudinary = require('cloudinary').v2;
-async function createCertificate(name, certificateId, year) {
+async function createCertificate(name, certificateId, year,position) {
   try {
 
     // Absolute paths (production safe)
@@ -64,6 +64,19 @@ async function createCertificate(name, certificateId, year) {
     const yearY = 780;   // adjust if needed
 
     ctx.fillText(yearText, template.width / 2, yearY);
+
+    // =============================
+    // ADD POSITION (Second Line)
+    // =============================
+    ctx.font = "bold 40px Arial";
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center";
+    
+    // Adjust if needed
+    const positionX = template.width / 2;
+    const positionY = 830;
+    
+    ctx.fillText(position, positionX, positionY);
     // =============================
     // ADD QR CODE (Exact Marked Area)
     // =============================
